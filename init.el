@@ -160,6 +160,7 @@
 (load custom-file 'noerror)
 
 (setq gc-cons-threshold best-gc-cons-threshold)
+
 ;;; Local Variables:
 ;;; no-byte-compile: t
 ;;; End:
