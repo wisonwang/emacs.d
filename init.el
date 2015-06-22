@@ -95,6 +95,7 @@
   (require 'init-org-mime))
 (require 'init-css)
 (require 'init-python-mode)
+(require 'init-jdee)
 (require 'init-haskell)
 (require 'init-ruby-mode)
 (require 'init-lisp)
@@ -113,7 +114,7 @@
 (require 'init-moz)
 (require 'init-gtags)
 ;; use evil mode (vi key binding)
-(require 'init-evil)
+;;(require 'init-evil)
 (require 'init-sh)
 (require 'init-ctags)
 (require 'init-ace-jump-mode)
@@ -172,6 +173,13 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(window-numbering-face ((t (:foreground "DeepPink" :underline "DeepPink" :weight bold))) t))
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(jde-jdk-registry (quote (("1.8" . "/opt/local/jdk1.8.0_45/"))))
+ '(session-use-package t nil (session)))
 ;;; Local Variables:
 ;;; no-byte-compile: t
 ;;; End:
