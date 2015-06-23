@@ -144,6 +144,7 @@ ARCHIVE is the string name of the package archive.")
     fancy-narrow
     company-c-headers
     company-anaconda
+    slime
     anaconda-mode)
   "Don't install any Melpa packages except these packages")
 
@@ -274,6 +275,7 @@ ARCHIVE is the string name of the package archive.")
   (require-package 'anaconda-mode)
   (require-package 'company-anaconda))
 (require-package 'quack) ;; for scheme
+(require-package 'slime)
 
 ;; (require-package 'command-frequency)
 
