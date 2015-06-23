@@ -126,6 +126,91 @@ ARCHIVE is the string name of the package archive.")
         (package-refresh-contents)
         (require-package package min-version t)))))
 
+
+;;------------------------------------------------------------------------------
+;; Standard package repositories
+;;------------------------------------------------------------------------------
+
+;; We include the org repository for completeness, but don't use it.
+;; Lock org-mode temporarily:
+;; (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/"))
+
+
+;; well, melpa does not bother supporting emacs23 any more, but cl-lib is still required
+;; TODO: in half a year, I will remove gnu elpa because emacs 24.3 is the minimum version
+(setq package-archives '(("melpa" . "http://melpa.org/packages/")
+                         ("melpa-stable" . "http://stable.melpa.org/packages/")
+                         ))
+
+;; Un-comment below line if you download zip file from https://github.com/redguardtoo/myelpa/archive/master.zip and extract its content into ~/myelpa/
+;; (setq package-archives '(("myelpa" . "~/projs/myelpa")))
+
+(if (not *emacs24*) (add-to-list 'package-archives '("localelpa" . "~/.emacs.d/localelpa")))
+
+;; Or Un-comment below line if you prefer installing package from https://github.com/redguardtoo/myelpa/ directly
+;; (setq package-archives '(("myelpa" . "https://raw.github.com/redguardtoo/myelpa/master/")))
+
+(defvar melpa-include-packages
+  '(bbdb
+    json-rpc
+    kv
+    color-theme
+    wgrep
+    robe
+    inf-ruby
+    dsvn
+    move-text
+    findr
+    mwe-log-commands
+    dired-details
+    yaml-mode
+    noflet
+    db
+    creole
+    web
+    elnode
+    sass-mode
+    idomenu
+    pointback
+    buffer-move
+    regex-tool
+    csharp-mode
+    switch-window
+    sr-speedbar
+    quack
+    iedit
+    legalese
+    htmlize
+    scratch
+    mic-paren
+    session
+    crontab-mode
+    bookmark+
+    flymake-lua
+    multi-term
+    dired+
+    inflections
+    dropdown-list
+    lua-mode
+    pomodoro
+    helm
+    auto-compile
+    packed
+    gitconfig-mode
+    project-local-variables
+    org-fstree
+    textile-mode
+    pretty-mode
+    w3m
+    fakir
+    erlang
+    fancy-narrow
+    company-c-headers
+    company-anaconda
+    slime
+    anaconda-mode)
+  "Don't install any Melpa packages except these packages")
+
 ;; Don't take Melpa versions of certain packages
 (setq package-filter-function
       (lambda (package version archive)
@@ -245,6 +330,7 @@ ARCHIVE is the string name of the package archive.")
 (require-package 'neotree)
 (require-package 'define-word)
 (require-package 'quack) ;; for scheme
-(require-package 'hydra)
+
+(require-package 'slime)
 
 (provide 'init-elpa)
