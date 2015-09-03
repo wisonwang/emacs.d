@@ -330,7 +330,8 @@ ARCHIVE is the string name of the package archive.")
 (require-package 'neotree)
 (require-package 'define-word)
 (require-package 'quack) ;; for scheme
-
+(require-package 'slime)
+(require-package 'pyvenv)
 (require-package 'slime)
 
 (provide 'init-elpa)

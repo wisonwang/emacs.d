@@ -13,6 +13,24 @@
     (setq electric-indent-chars (delq ?: electric-indent-chars))
     ))
 
+<<<<<<< 254578d85f74204460c74a1ac2d4935c8dc18f24
 (add-hook 'python-mode-hook 'python-mode-hook-setup)
+=======
+;;----------------------------------------------------------------------------
+;; On-the-fly syntax checking via flymake
+;;----------------------------------------------------------------------------
+(eval-after-load 'python
+  '(require 'flymake-python-pyflakes))
+
+(add-hook 'python-mode-hook '(lambda ()
+                               (unless (is-buffer-file-temp)
+                                 (message "python-mode-hook called")
+                                 (when *emacs24*
+                                   (anaconda-mode)
+                                   (add-to-list 'company-backends 'company-anaconda)
+                                   (eldoc-mode))
+                                 (flymake-python-pyflakes-load)
+                                 )))
+>>>>>>> add python env package
 
 (provide 'init-python-mode)
