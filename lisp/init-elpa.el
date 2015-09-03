@@ -276,6 +276,7 @@ ARCHIVE is the string name of the package archive.")
   (require-package 'company-anaconda))
 (require-package 'quack) ;; for scheme
 (require-package 'slime)
+(require-package 'pyvenv)
 
 ;; (require-package 'command-frequency)
 
