@@ -3,7 +3,7 @@
 ;; Author: Vegard Øye <vegard_oye at hotmail.com>
 ;; Maintainer: Vegard Øye <vegard_oye at hotmail.com>
 
-;; Version: 1.0.9
+;; Version: 1.2.3
 
 ;;
 ;; This file is NOT part of GNU Emacs.
@@ -39,6 +39,7 @@ AKA \"Command\" state."
   :exit-hook (evil-repeat-start-hook)
   (cond
    ((evil-normal-state-p)
+    (overwrite-mode -1)
     (add-hook 'post-command-hook #'evil-normal-post-command nil t))
    (t
     (remove-hook 'post-command-hook #'evil-normal-post-command t))))
@@ -47,7 +48,8 @@ AKA \"Command\" state."
   "Reset command loop variables in Normal state.
 Also prevent point from reaching the end of the line.
 If the region is activated, enter Visual state."
-  (unless (evil-initializing-p)
+  (unless (or (evil-initializing-p)
+              (null this-command))
     (setq command (or command this-command))
     (when (evil-normal-state-p)
       (setq evil-this-type nil
@@ -80,14 +82,14 @@ If the region is activated, enter Visual state."
   (cond
    ((evil-insert-state-p)
     (add-hook 'pre-command-hook #'evil-insert-repeat-hook)
-    (unless evil-want-fine-undo
+    (unless (eq evil-want-fine-undo t)
       (evil-start-undo-step t)))
    (t
     (remove-hook 'pre-command-hook #'evil-insert-repeat-hook)
     (setq evil-insert-repeat-info evil-repeat-info)
     (evil-set-marker ?^ nil t)
-    (unless evil-want-fine-undo
-      (evil-end-undo-step t))
+    (unless (eq evil-want-fine-undo t)
+      (evil-end-undo-step t (eq evil-want-fine-undo 'fine)))
     (when evil-move-cursor-back
       (when (or (evil-normal-state-p evil-next-state)
                 (evil-motion-state-p evil-next-state))
@@ -308,15 +310,17 @@ otherwise exit Visual state."
 
 (defun evil-visual-update-x-selection (&optional buffer)
   "Update the X selection with the current visual region."
-  (with-current-buffer (or buffer (current-buffer))
-    (when (and (evil-visual-state-p)
-               (fboundp 'x-select-text)
-               (or (not (boundp 'ns-initialized))
-                   (with-no-warnings ns-initialized))
-               (not (eq evil-visual-selection 'block)))
-      (x-select-text (buffer-substring-no-properties
-                      evil-visual-beginning
-                      evil-visual-end)))))
+  (let ((buf (or buffer (current-buffer))))
+    (when (buffer-live-p buf)
+      (with-current-buffer buf
+        (when (and (evil-visual-state-p)
+                   (fboundp 'x-select-text)
+                   (or (not (boundp 'ns-initialized))
+                       (with-no-warnings ns-initialized))
+                   (not (eq evil-visual-selection 'block)))
+          (x-select-text (buffer-substring-no-properties
+                          evil-visual-beginning
+                          evil-visual-end)))))))
 
 (defun evil-visual-activate-hook (&optional command)
   "Enable Visual state if the region is activated."
@@ -792,17 +796,8 @@ CORNER defaults to `upper-left'."
 (defun evil-half-cursor ()
   "Change cursor to a half-height box.
 \(This is really just a thick horizontal bar.)"
-  (let (height)
-    ;; make `window-line-height' reliable
-    (redisplay)
-    (setq height (window-line-height))
-    (setq height (+ (nth 0 height) (nth 3 height)))
-    ;; cut cursor height in half
-    (setq height (/ height 2))
-    (setq cursor-type (cons 'hbar height))
-    ;; ensure the cursor is redisplayed
-    (force-window-update (selected-window))
-    (redisplay)))
+  (let ((height (/ (window-pixel-height) (* (window-height) 2))))
+    (setq cursor-type (cons 'hbar height))))
 
 ;;; Replace state
 
@@ -811,13 +806,18 @@ CORNER defaults to `upper-left'."
   :tag " <R> "
   :cursor hbar
   :message "-- REPLACE --"
+  :input-method t
   (cond
    ((evil-replace-state-p)
     (overwrite-mode 1)
-    (add-hook 'pre-command-hook #'evil-replace-pre-command nil t))
+    (add-hook 'pre-command-hook #'evil-replace-pre-command nil t)
+    (unless (eq evil-want-fine-undo t)
+      (evil-start-undo-step t)))
    (t
     (overwrite-mode -1)
     (remove-hook 'pre-command-hook #'evil-replace-pre-command t)
+    (unless (eq evil-want-fine-undo t)
+      (evil-end-undo-step t))
     (when evil-move-cursor-back
       (evil-move-cursor-back))))
   (setq evil-replace-alist nil))

@@ -14,10 +14,14 @@
     (comint-send-string (inferior-moz-process) cmd)
     ))
 
+(defvar moz-reload-browser-when-save nil
+  "Reload the browser when save")
+
 (defun moz-after-save ()
   (interactive)
-  (when (memq major-mode '(web-mode html-mode nxml-mode nxhml-mode php-mode))
-    (moz-reload-browser)))
+  (if (memq major-mode '(web-mode html-mode nxml-mode nxhml-mode php-mode))
+      (if moz-reload-browser-when-save
+          (moz-reload-browser))))
 ;; }}
 
 (defun moz-custom-setup ()
@@ -25,6 +29,7 @@
   (unless (is-buffer-file-temp)
     (message "moz-custom-setup called (buffer-file-name)=%s" (buffer-file-name))
     (moz-minor-mode 1)
+    (setq moz-quiet t)
     ;; @see  http://www.emacswiki.org/emacs/MozRepl
     ;; Example - you may want to add hooks for your own modes.
     ;; I also add this to python-mode when doing django development.

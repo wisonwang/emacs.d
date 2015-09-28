@@ -1,41 +1,24 @@
-(autoload 'turn-on-pretty-mode "pretty-mode")
-
 ;; ----------------------------------------------------------------------------
 ;; Paredit
 ;; ----------------------------------------------------------------------------
 (autoload 'enable-paredit-mode "paredit")
 
-;; {{
+(setq-default initial-scratch-message
+              (concat ";; Happy hacking " (or user-login-name "") " - Emacs loves you!\n\n"))
+
+;; {{ scheme setup
 (setq scheme-program-name "guile")
-(require 'quack)
+(eval-after-load 'scheme-mode
+  '(progn
+     (require 'quack)))
 ;; }}
 
-
-(defun maybe-map-paredit-newline ()
-  (unless (or (eq major-mode 'inferior-emacs-lisp-mode) (minibufferp))
-    (local-set-key (kbd "RET") 'paredit-newline)))
-
-(add-hook 'paredit-mode-hook 'maybe-map-paredit-newline)
+;; A quick way to jump to the definition of a function given its key binding
+(global-set-key (kbd "C-h K") 'find-function-on-key)
 
 (eval-after-load 'paredit
   '(progn
-     (diminish 'paredit-mode " Par")
-     ;; These are handy everywhere, not just in lisp modes
-     (global-set-key (kbd "M-(") 'paredit-wrap-round)
-     (global-set-key (kbd "M-[") 'paredit-wrap-square)
-     (global-set-key (kbd "M-{") 'paredit-wrap-curly)
-     (global-set-key (kbd "M-)") 'paredit-close-round-and-newline)
-     (global-set-key (kbd "M-]") 'paredit-close-square-and-newline)
-     (global-set-key (kbd "M-}") 'paredit-close-curly-and-newline)
-
-     (dolist (binding (list (kbd "C-<left>") (kbd "C-<right>")
-                            (kbd "C-M-<left>") (kbd "C-M-<right>")))
-       (define-key paredit-mode-map binding nil))
-
-     ;; Disable kill-sentence, which is easily confused with the kill-sexp
-     ;; binding, but doesn't preserve sexp structure
-     (define-key paredit-mode-map [remap kill-sentence] nil)
-     (define-key paredit-mode-map [remap backward-kill-sentence] nil)))
+     (diminish 'paredit-mode " Par")))
 
 
 ;; Use paredit in the minibuffer
@@ -54,14 +37,6 @@
       (enable-paredit-mode)))
 
 
-;; ----------------------------------------------------------------------------
-;; Hippie-expand
-;; ----------------------------------------------------------------------------
-(defun set-up-hippie-expand-for-elisp ()
-  "Locally set `hippie-expand' completion functions for use with Emacs Lisp."
-  (make-local-variable 'hippie-expand-try-functions-list)
-  (add-to-list 'hippie-expand-try-functions-list 'try-complete-lisp-symbol t)
-  (add-to-list 'hippie-expand-try-functions-list 'try-complete-lisp-symbol-partially t))
 
 
 
@@ -74,35 +49,19 @@
      (when turn-on
        (remove-hook 'pre-command-hook #'hl-sexp-unhighlight))))
 
-
-
 ;; ----------------------------------------------------------------------------
 ;; Enable desired features for all lisp modes
 ;; ----------------------------------------------------------------------------
 (defun sanityinc/lisp-setup ()
   "Enable features useful in any Lisp mode."
   (enable-paredit-mode)
+  (rainbow-delimiters-mode t)
   (turn-on-eldoc-mode))
 
-(defun sanityinc/emacs-lisp-setup ()
-  "Enable features useful when working with elisp."
-  (rainbow-delimiters-mode t)
-  (set-up-hippie-expand-for-elisp)
-  ;; (ac-emacs-lisp-mode-setup)
-  (checkdoc-minor-mode))
-
-(let* ((elispy-hooks '(emacs-lisp-mode-hook
-                       ielm-mode-hook))
-       (lispy-hooks (append elispy-hooks '(lisp-mode-hook
-                                           inferior-lisp-mode-hook
-                                           lisp-interaction-mode-hook))))
+(let* ((lispy-hooks '(lisp-mode-hook
+                      inferior-lisp-mode-hook
+                      lisp-interaction-mode-hook)))
   (dolist (hook lispy-hooks)
-    (add-hook hook 'sanityinc/lisp-setup))
-  (dolist (hook elispy-hooks)
-    (add-hook hook 'sanityinc/emacs-lisp-setup)))
-
-
-(add-to-list 'auto-mode-alist '("\\.emacs-project\\'" . emacs-lisp-mode))
-(add-to-list 'auto-mode-alist '("archive-contents\\'" . emacs-lisp-mode))
+    (add-hook hook 'sanityinc/lisp-setup)))
 
 (provide 'init-lisp)
