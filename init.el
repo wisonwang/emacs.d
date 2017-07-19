@@ -114,6 +114,7 @@
   (require 'init-web-mode)
   (require 'init-slime)
   (require 'init-company)
+  (require 'init-scala)
   (require 'init-chinese-pyim) ;; cannot be idle-required
   ;; need statistics of keyfreq asap
   (require 'init-keyfreq)

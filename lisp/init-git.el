@@ -209,7 +209,7 @@
                 (message "commit hash %s => clipboard & kill-ring" hash)))))
 (global-set-key (kbd "C-x v p") 'git-messenger:popup-message)
 ;; }}
-
+(require 'magit)
 
 (provide 'init-git)
 
