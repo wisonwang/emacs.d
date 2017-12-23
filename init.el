@@ -130,6 +130,7 @@
 
   (require 'init-emacs-w3m)
   (require 'init-hydra)
+  (require 'init-go)
 
   ;; {{ idle require other stuff
   (setq idle-require-idle-delay 2)
@@ -161,3 +162,6 @@
 ;;; no-byte-compile: t
 ;;; End:
 (put 'erase-buffer 'disabled nil)
+
+
+(add-hook 'after-init-hook #'global-flycheck-mode)

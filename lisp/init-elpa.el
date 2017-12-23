@@ -55,6 +55,12 @@ But you may use safer HTTPS instead.")
     w3m
     erlang
     workgroups2
+    flycheck
+    go-mode
+    go-eldoc
+    gotest
+    auto-complete
+    exec-path-from-shell
     company-c-headers)
   "Don't install any Melpa packages except these packages")
 
@@ -260,4 +266,12 @@ But you may use safer HTTPS instead.")
 (require-package 'quack) ; for scheme
 (require-package 'hydra)
 
+(require-package 'go-mode)
+(require-package 'go-eldoc)
+(require-package 'flycheck)
+(require-package 'auto-complete)
+(require-package 'exec-path-from-shell)
+(require-package 'gotest)
+
 (provide 'init-elpa)
+
